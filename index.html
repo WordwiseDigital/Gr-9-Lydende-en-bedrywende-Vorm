@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="af">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-pop Afrikaans: Lydende en Bedrywende Vorm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #a855f7 0%, #ec4899 50%, #3b82f6 100%);
+        }
+        .card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .btn-primary {
+            background: linear-gradient(to right, #8b5cf6, #ec4899);
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(to right, #7c3aed, #db2777);
+            transform: translateY(-1px);
+        }
+        .progress-bar {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div class="container mx-auto px-4 py-6">
+        <!-- Header -->
+        <div class="bg-white rounded-lg card-shadow p-6 mb-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/>
+                    </svg>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">K-pop Afrikaans FAL</h1>
+                        <p class="text-gray-600">Lydende en Bedrywende Vorm • Graad 9</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <div class="text-sm text-gray-600">Vordering</div>
+                    <div class="text-lg font-bold text-purple-600" id="progress-text">0/6</div>
+                </div>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="w-full bg-gray-200 rounded-full h-3 mt-4">
+                <div id="progress-bar" class="btn-primary h-3 rounded-full progress-bar" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="bg-white rounded-lg card-shadow p-4 mb-6">
+            <div class="flex flex-wrap gap-2" id="nav-buttons">
+                <!-- Navigation buttons will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="bg-white rounded-lg card-shadow p-8 mb-6">
+            <h2 class="text-2xl font-bold text-center mb-6 text-gray-800" id="section-title">
+                🎵 Welkom by K-pop Afrikaans! 🎵
+            </h2>
+            <div id="section-content">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="flex justify-between">
+            <button id="prev-btn" class="px-6 py-3 rounded-lg font-semibold transition-colors bg-gray-200 text-gray-400 cursor-not-allowed" disabled>
+                ← Vorige
+            </button>
+            <button id="next-btn" class="btn-primary text-white px-6 py-3 rounded-lg font-semibold flex items-center space-x-2">
+                <span>Volgende</span>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // App State
+        let currentSection = 'intro';
+        let completedSections = new Set();
+        let selectedAnswers = {};
+        let score = 0;
+
+        const sectionOrder = ['intro', 'theory1', 'theory2', 'practice1', 'practice2', 'practice3', 'summary'];
+
+        // Section Content
+        const sections = {
+            intro: {
+                title: '🎵 Welkom by K-pop Afrikaans! 🎵',
+                content: `
+                    <div class="text-center space-y-6">
+                        <div class="text-6xl mb-4">🎤</div>
+                        <h2 class="text-2xl font-bold text-purple-800">Leer Lydende en Bedrywende Vorm met K-pop!</h2>
+                        <p class="text-lg text-gray-700">
+                            Kom ons ontdek hoe om sinne te verander van aktief na passief en terug, 
+                            met jou gunsteling K-pop groepe as voorbeelde!
+                        </p>
+                        <div class="bg-gradient-to-r from-pink-100 to-purple-100 p-4 rounded-lg">
+                            <p class="font-semibold text-purple-700">Wat gaan jy leer:</p>
+                            <ul class="list-disc list-inside text-left mt-2 space-y-1">
+                                <li>Wat is Bedrywende vorm (Aktiewe vorm)?</li>
+                                <li>Wat is Lydende vorm (Passiewe vorm)?</li>
+                                <li>Hoe om tussen die twee te skakel</li>
+                                <li>Praktiese oefeninge met K-pop voorbeelde!</li>
+                            </ul>
+                        </div>
+                    </div>
+                `
+            },
+
+            theory1: {
+                title: '🎯 Bedrywende Vorm (Aktiewe Vorm)',
+                content: `
+                    <div class="space-y-6">
+                        <div class="bg-blue-50 p-6 rounded-lg border-l-4 border-blue-400">
+                            <h3 class="text-xl font-bold text-blue-800 mb-3">Wat is Bedrywende Vorm?</h3>
+                            <p class="text-gray-700 mb-4">
+                                In die <strong>bedrywende vorm</strong> voer die onderwerp van die sin die handeling uit.
+                            </p>
+                            <div class="bg-white p-4 rounded border-l-4 border-pink-300">
+                                <p class="font-semibold text-pink-700">Formule:</p>
+                                <p class="text-lg">
+                                    <span class="bg-yellow-200 px-2 py-1 rounded">Onderwerp</span> + 
+                                    <span class="bg-green-200 px-2 py-1 rounded mx-2">Werkwoord</span> + 
+                                    <span class="bg-blue-200 px-2 py-1 rounded">Voorwerp</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-gradient-to-br from-purple-100 to-pink-100 p-4 rounded-lg">
+                                <h4 class="font-bold text-purple-800 mb-2">🎵 K-pop Voorbeelde:</h4>
+                                <div class="space-y-2 text-sm">
+                                    <div class="bg-white p-2 rounded">
+                                        <strong>BTS</strong> <span class="text-purple-600">sing</span> <strong>nuwe liedere</strong>
+                                    </div>
+                                    <div class="bg-white p-2 rounded">
+                                        <strong>BLACKPINK</strong> <span class="text-purple-600">maak</span> <strong>musiekvideos</strong>
+                                    </div>
+                                    <div class="bg-white p-2 rounded">
+                                        <strong>Fans</strong> <span class="text-purple-600">ondersteun</span> <strong>hul idols</strong>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-yellow-50 p-4 rounded-lg border-l-4 border-yellow-400">
+                                <h4 class="font-bold text-yellow-800 mb-2">🔍 Hoe om te herken:</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>• Die onderwerp <strong>doen</strong> iets</li>
+                                    <li>• Die handeling gaan van onderwerp na voorwerp</li>
+                                    <li>• Direkte, aktiewe taal</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            theory2: {
+                title: '🎭 Lydende Vorm (Passiewe Vorm)',
+                content: `
+                    <div class="space-y-6">
+                        <div class="bg-purple-50 p-6 rounded-lg border-l-4 border-purple-400">
+                            <h3 class="text-xl font-bold text-purple-800 mb-3">Wat is Lydende Vorm?</h3>
+                            <p class="text-gray-700 mb-4">
+                                In die <strong>lydende vorm</strong> ondergaan die onderwerp die handeling. 
+                                Die oorspronklike voorwerp word nou die onderwerp.
+                            </p>
+                            <div class="bg-white p-4 rounded border-l-4 border-pink-300">
+                                <p class="font-semibold text-pink-700">Formule:</p>
+                                <p class="text-lg">
+                                    <span class="bg-blue-200 px-2 py-1 rounded">Nuwe Onderwerp</span> + 
+                                    <span class="bg-green-200 px-2 py-1 rounded mx-2">word/sal/het + Verlede Deelwoord</span> + 
+                                    <span class="bg-orange-200 px-2 py-1 rounded">deur + Oorspronklike Onderwerp</span>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <div class="bg-gradient-to-br from-pink-100 to-purple-100 p-4 rounded-lg">
+                                <h4 class="font-bold text-pink-800 mb-2">🎵 K-pop Transformasies:</h4>
+                                <div class="space-y-3 text-sm">
+                                    <div class="bg-white p-3 rounded border-l-2 border-blue-400">
+                                        <div class="font-semibold text-blue-600">Bedrywend:</div>
+                                        <div>BTS sing nuwe liedere</div>
+                                        <div class="font-semibold text-purple-600 mt-1">Lydend:</div>
+                                        <div>Nuwe liedere <strong>word gesing</strong> deur BTS</div>
+                                    </div>
+                                    <div class="bg-white p-3 rounded border-l-2 border-pink-400">
+                                        <div class="font-semibold text-blue-600">Bedrywend:</div>
+                                        <div>Fans ondersteun hul idols</div>
+                                        <div class="font-semibold text-purple-600 mt-1">Lydend:</div>
+                                        <div>Idols <strong>word ondersteun</strong> deur fans</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-400">
+                                <h4 class="font-bold text-green-800 mb-2">🔍 Hoe om te herken:</h4>
+                                <ul class="text-sm space-y-1">
+                                    <li>• <strong>word/sal word/is</strong> + verlede deelwoord</li>
+                                    <li>• <strong>deur</strong> + die een wat die handeling doen</li>
+                                    <li>• Die onderwerp ondergaan die handeling</li>
+                                    <li>• Fokus op wat gebeur, nie wie dit doen nie</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `
+            },
+
+            practice1: {
+                title: '🎤 Oefening 1: Identifiseer die Vorm',
+                content: `
+                    <div class="space-y-6">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-bold text-purple-800">Bepaal of hierdie sinne Bedrywend of Lydend is:</h3>
+                            <div class="flex justify-center space-x-4 mt-2">
+                                <span class="bg-blue-100 px-3 py-1 rounded-full text-blue-800 font-semibold">Bedrywend = Aktief</span>
+                                <span class="bg-purple-100 px-3 py-1 rounded-full text-purple-800 font-semibold">Lydend = Passief</span>
+                            </div>
+                        </div>
+                        
+                        <div id="practice1-questions">
+                            ${generatePractice1Questions()}
+                        </div>
+                    </div>
+                `
+            },
+
+            practice2: {
+                title: '🔄 Oefening 2: Transformeer die Sinne',
+                content: `
+                    <div class="space-y-6">
+                        <div class="text-center mb-6">
+                            <h3 class="text-xl font-bold text-purple-800">Verander hierdie bedrywende sinne na lydende vorm:</h3>
+                            <p class="text-gray-600 mt-2">Onthou: Onderwerp + word/sal word + verlede deelwoord + deur + oorspronklike onderwerp</p>
+                        </div>
+                        
+                        <div id="practice2-questions">
+                            ${generatePractice2Questions()}
+                        </div>
+                    </div>
+                `
+            },
+
+            practice3: {
+                title: '🎯 Oefening 3: K-pop Quiz Uitdaging',
+                content: `
+                    <div class="space-y-6">
+                        <div class="text-center mb-6 btn-primary text-white p-6 rounded-lg">
+                            <div class="text-4xl mb-2">🏆</div>
+                            <h3 class="text-xl font-bold">Finale K-pop Taaluitdaging!</h3>
+                            <p>Toets jou kennis met hierdie gemengde vrae!</p>
+                        </div>
+                        
+                        <div id="practice3-questions">
+                            ${generatePractice3Questions()}
+                        </div>
+                    </div>
+                `
+            },
+
+            summary: {
+                title: '🎉 Baie Goed! Opsomming',
+                content: `
+                    <div class="text-center space-y-6">
+                        <div class="text-6xl mb-4">🏆</div>
+                        <h2 class="text-2xl font-bold text-purple-800">Jy het dit reggekry! 🎵</h2>
+                        
+                        <div class="bg-gradient-to-r from-purple-100 to-pink-100 p-6 rounded-lg max-w-2xl mx-auto">
+                            <h3 class="text-xl font-bold text-purple-800 mb-4">Wat jy geleer het:</h3>
+                            <div class="grid md:grid-cols-2 gap-4 text-left">
+                                <div class="bg-white p-4 rounded">
+                                    <h4 class="font-bold text-blue-700 mb-2">🎵 Bedrywende Vorm</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Onderwerp doen die handeling</li>
+                                        <li>• Aktiewe taal</li>
+                                        <li>• BTS sing liedere</li>
+                                    </ul>
+                                </div>
+                                <div class="bg-white p-4 rounded">
+                                    <h4 class="font-bold text-purple-700 mb-2">🎭 Lydende Vorm</h4>
+                                    <ul class="text-sm space-y-1">
+                                        <li>• Onderwerp ondergaan handeling</li>
+                                        <li>• word + verlede deelwoord</li>
+                                        <li>• Liedere word deur BTS gesing</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-yellow-50 p-4 rounded-lg border-2 border-yellow-300">
+                            <p class="font-semibold text-yellow-800">🌟 Onthou die formule:</p>
+                            <p class="text-lg mt-2">
+                                <span class="bg-blue-200 px-2 py-1 rounded mr-2">Nuwe Onderwerp</span> + 
+                                <span class="bg-green-200 px-2 py-1 rounded mx-2">word + Verlede Deelwoord</span> + 
+                                <span class="bg-orange-200 px-2 py-1 rounded ml-2">deur + Oorspronklike Onderwerp</span>
+                            </p>
+                        </div>
+                        
+                        <p class="text-lg text-gray-700">
+                            Hou aan oefen met jou gunsteling K-pop liedere en groepies! 🎤✨
+                        </p>
+                    </div>
+                `
+            }
+        };
+
+        // Generate Practice Questions
+        function generatePractice1Questions() {
+            const questions = [
+                { id: 'q1', sentence: 'TWICE maak pragtige musiek.', answer: 'bedrywend', explanation: 'TWICE (onderwerp) voer die handeling uit.' },
+                { id: 'q2', sentence: 'Die nuwe album word deur SEVENTEEN uitgereik.', answer: 'lydend', explanation: 'Die album (onderwerp) ondergaan die handeling, "word uitgereik" is lydende vorm.' },
+                { id: 'q3', sentence: 'K-pop fans koop konsertkaartjies.', answer: 'bedrywend', explanation: 'Fans (onderwerp) voer die handeling "koop" uit.' },
+                { id: 'q4', sentence: 'Die liedjie word deur miljoene mense gehoor.', answer: 'lydend', explanation: '"word gehoor" is lydende vorm, die liedjie ondergaan die handeling.' }
+            ];
+
+            return questions.map((question, index) => `
+                <div class="bg-white p-4 rounded-lg border-2 border-gray-200 hover:border-purple-300 transition-colors">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-5 h-5 text-pink-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"/>
+                        </svg>
+                        <span class="font-semibold text-gray-800">Vraag ${index + 1}:</span>
+                    </div>
+                    <p class="text-lg mb-4 italic">"${question.sentence}"</p>
+                    <div class="flex space-x-4">
+                        <button onclick="selectAnswer('${question.id}', 'bedrywend')" 
+                                id="btn-${question.id}-bedrywend"
+                                class="px-4 py-2 rounded-lg font-semibold transition-colors bg-blue-100 text-blue-800 hover:bg-blue-200">
+                            🎵 Bedrywend
+                        </button>
+                        <button onclick="selectAnswer('${question.id}', 'lydend')" 
+                                id="btn-${question.id}-lydend"
+                                class="px-4 py-2 rounded-lg font-semibold transition-colors bg-purple-100 text-purple-800 hover:bg-purple-200">
+                            🎭 Lydend
+                        </button>
+                    </div>
+                    <div id="feedback-${question.id}" class="hidden mt-3 p-3 rounded">
+                        <!-- Feedback will be shown here -->
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generatePractice2Questions() {
+            const transforms = [
+                { 
+                    id: 't1', 
+                    original: 'NewJeans sing \'n nuwe liedjie.', 
+                    answer: 'ʼn Nuwe liedjie word deur NewJeans gesing.',
+                    hint: 'Begin met "ʼn Nuwe liedjie..."'
+                },
+                { 
+                    id: 't2', 
+                    original: 'Die produsent maak die musiekvideo.', 
+                    answer: 'Die musiekvideo word deur die produsent gemaak.',
+                    hint: 'Begin met "Die musiekvideo..."'
+                },
+                { 
+                    id: 't3', 
+                    original: 'Stray Kids sal ʼn konsert aanbied.', 
+                    answer: 'ʼn Konsert sal deur Stray Kids aangebied word.',
+                    hint: 'Gebruik "sal...aangebied word"'
+                }
+            ];
+
+            return transforms.map((transform, index) => `
+                <div class="bg-gradient-to-r from-pink-50 to-purple-50 p-6 rounded-lg border-2 border-purple-200">
+                    <div class="flex items-center mb-3">
+                        <svg class="w-5 h-5 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                        </svg>
+                        <span class="font-semibold text-gray-800">Transformasie ${index + 1}:</span>
+                    </div>
+                    <div class="bg-blue-100 p-3 rounded mb-4">
+                        <p class="font-semibold text-blue-800">Bedrywende vorm:</p>
+                        <p class="text-lg italic">"${transform.original}"</p>
+                    </div>
+                    <div class="bg-purple-100 p-3 rounded mb-4">
+                        <p class="font-semibold text-purple-800">Jou antwoord (Lydende vorm):</p>
+                        <textarea id="answer-${transform.id}" 
+                                class="w-full mt-2 p-2 border border-purple-300 rounded focus:outline-none focus:border-purple-500"
+                                rows="2"
+                                placeholder="Tik jou antwoord hier..."></textarea>
+                    </div>
+                    <div class="bg-yellow-50 p-3 rounded border-l-4 border-yellow-400 mb-4">
+                        <p class="text-sm text-yellow-800"><strong>Wenk:</strong> ${transform.hint}</p>
+                    </div>
+                    
+                    <div class="flex space-x-3">
+                        <button onclick="checkTransform('${transform.id}')" 
+                                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors">
+                            Kontroleer Antwoord
+                        </button>
+                        <button onclick="showAnswer('${transform.id}')" 
+                                class="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition-colors">
+                            Wys Korrekte Antwoord
+                        </button>
+                    </div>
+                    
+                    <div id="transform-feedback-${transform.id}" class="hidden mt-4">
+                        <!-- Feedback will be shown here -->
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function generatePractice3Questions() {
+            const quizzes = [
+                {
+                    id: 'quiz1',
+                    type: 'multiple',
+                    question: 'Watter sin is in die lydende vorm?',
+                    options: [
+                        'aespa dans op die verhoog.',
+                        'Die verhoog word deur aespa gebruik.',
+                        'ITZY sing pragtige liedere.',
+                        'Fans juig vir hul idols.'
+                    ],
+                    answer: 1,
+                    explanation: '"word gebruik" is lydende vorm - die verhoog ondergaan die handeling.'
+                },
+                {
+                    id: 'quiz2',
+                    type: 'transform',
+                    question: 'Verander na lydende vorm: "Die fans koop die album."',
+                    answer: 'Die album word deur die fans gekoop.',
+                    explanation: 'Voorwerp word onderwerp, "word gekoop" is lydende vorm.'
+                },
+                {
+                    id: 'quiz3',
+                    type: 'identify',
+                    question: 'Identifiseer die onderwerp in: "Die musiek word deur TWICE gemaak."',
+                    answer: 'Die musiek',
+                    explanation: 'In lydende vorm is "Die musiek" die onderwerp wat die handeling ondergaan.'
+                }
+            ];
+
+            return quizzes.map((quiz, index) => {
+                let content = `
+                    <div class="bg-white p-6 rounded-lg border-2 border-gray-200 card-shadow">
+                        <div class="flex items-center mb-4">
+                            <svg class="w-5 h-5 text-red-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                            </svg>
+                            <span class="font-bold text-lg text-gray-800">Quiz ${index + 1}</span>
+                        </div>
+                        
+                        <p class="text-lg mb-4 font-semibold">${quiz.question}</p>
+                `;
+
+                if (quiz.type === 'multiple') {
+                    content += '<div class="space-y-2">';
+                    quiz.options.forEach((option, optIndex) => {
+                        content += `
+                            <button onclick="selectQuizAnswer('${quiz.id}', ${optIndex})" 
+                                    id="quiz-btn-${quiz.id}-${optIndex}"
+                                    class="w-full text-left p-3 rounded border-2 transition-colors border-gray-200 hover:border-purple-300">
+                                ${String.fromCharCode(65 + optIndex)}. ${option}
+                            </button>
+                        `;
+                    });
+                    content += '</div>';
+                } else if (quiz.type === 'transform') {
+                    content += `
+                        <textarea id="quiz-answer-
