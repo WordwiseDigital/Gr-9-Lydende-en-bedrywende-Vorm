@@ -473,4 +473,252 @@
                     content += '</div>';
                 } else if (quiz.type === 'transform') {
                     content += `
-                        <textarea id="quiz-answer-
+                        <textarea id="quiz-answer-${quiz.id}" 
+                                class="w-full p-3 border-2 border-gray-200 rounded focus:border-purple-500 focus:outline-none"
+                                rows="2"
+                                placeholder="Tik jou antwoord hier..."></textarea>
+                    `;
+                } else if (quiz.type === 'identify') {
+                    content += `
+                        <input type="text" id="quiz-answer-${quiz.id}"
+                               class="w-full p-3 border-2 border-gray-200 rounded focus:border-purple-500 focus:outline-none"
+                               placeholder="Tik jou antwoord hier...">
+                    `;
+                }
+
+                content += `
+                        <div id="quiz-feedback-${quiz.id}" class="hidden mt-4 p-3 bg-blue-50 rounded border-l-4 border-blue-400">
+                            <p class="font-semibold text-blue-800">Verduideliking:</p>
+                            <p class="text-sm text-gray-700">${quiz.explanation}</p>
+                        </div>
+                        
+                        <button onclick="checkQuizAnswer('${quiz.id}')" 
+                                class="mt-4 bg-purple-500 text-white px-4 py-2 rounded hover:bg-purple-600 transition-colors">
+                            Kontroleer Antwoord
+                        </button>
+                    </div>
+                `;
+
+                return content;
+            }).join('');
+        }
+
+        // JavaScript Functions
+        function updateProgress() {
+            const progressText = document.getElementById('progress-text');
+            const progressBar = document.getElementById('progress-bar');
+            
+            progressText.textContent = `${completedSections.size}/${sectionOrder.length - 1}`;
+            const percentage = (completedSections.size / (sectionOrder.length - 1)) * 100;
+            progressBar.style.width = `${percentage}%`;
+        }
+
+        function updateNavigation() {
+            const navButtons = document.getElementById('nav-buttons');
+            const currentIndex = sectionOrder.indexOf(currentSection);
+            
+            navButtons.innerHTML = sectionOrder.map((section, index) => {
+                let className = 'px-3 py-2 rounded-lg text-sm font-semibold transition-colors ';
+                
+                if (section === currentSection) {
+                    className += 'bg-purple-500 text-white';
+                } else if (completedSections.has(section)) {
+                    className += 'bg-green-100 text-green-800 hover:bg-green-200 cursor-pointer';
+                } else if (index <= currentIndex) {
+                    className += 'bg-gray-100 text-gray-700 hover:bg-gray-200 cursor-pointer';
+                } else {
+                    className += 'bg-gray-50 text-gray-400 cursor-not-allowed';
+                }
+                
+                const title = sections[section].title.replace(/🎵|🎯|🎭|🎤|🔄|🏆|🎉/g, '').trim();
+                return `<button onclick="goToSection('${section}')" class="${className}" ${index > currentIndex + 1 ? 'disabled' : ''}>${index + 1}. ${title}</button>`;
+            }).join('');
+        }
+
+        function updateNavigationButtons() {
+            const prevBtn = document.getElementById('prev-btn');
+            const nextBtn = document.getElementById('next-btn');
+            const currentIndex = sectionOrder.indexOf(currentSection);
+            
+            // Previous button
+            if (currentIndex === 0) {
+                prevBtn.disabled = true;
+                prevBtn.className = 'px-6 py-3 rounded-lg font-semibold transition-colors bg-gray-200 text-gray-400 cursor-not-allowed';
+            } else {
+                prevBtn.disabled = false;
+                prevBtn.className = 'px-6 py-3 rounded-lg font-semibold transition-colors bg-gray-500 text-white hover:bg-gray-600';
+            }
+            
+            // Next button
+            if (currentIndex >= sectionOrder.length - 1) {
+                nextBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'flex';
+            }
+        }
+
+        function goToSection(section) {
+            const sectionIndex = sectionOrder.indexOf(section);
+            const currentIndex = sectionOrder.indexOf(currentSection);
+            
+            if (sectionIndex <= currentIndex + 1) {
+                currentSection = section;
+                loadSection();
+            }
+        }
+
+        function loadSection() {
+            const sectionTitle = document.getElementById('section-title');
+            const sectionContent = document.getElementById('section-content');
+            
+            sectionTitle.textContent = sections[currentSection].title;
+            sectionContent.innerHTML = sections[currentSection].content;
+            
+            updateProgress();
+            updateNavigation();
+            updateNavigationButtons();
+        }
+
+        function nextSection() {
+            const currentIndex = sectionOrder.indexOf(currentSection);
+            if (currentIndex < sectionOrder.length - 1) {
+                completedSections.add(currentSection);
+                currentSection = sectionOrder[currentIndex + 1];
+                loadSection();
+            }
+        }
+
+        function prevSection() {
+            const currentIndex = sectionOrder.indexOf(currentSection);
+            if (currentIndex > 0) {
+                currentSection = sectionOrder[currentIndex - 1];
+                loadSection();
+            }
+        }
+
+        // Practice Functions
+        function selectAnswer(questionId, answer) {
+            selectedAnswers[questionId] = answer;
+            
+            // Update button styles
+            const bedrywendBtn = document.getElementById(`btn-${questionId}-bedrywend`);
+            const lydendBtn = document.getElementById(`btn-${questionId}-lydend`);
+            
+            bedrywendBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-colors bg-blue-100 text-blue-800 hover:bg-blue-200';
+            lydendBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-colors bg-purple-100 text-purple-800 hover:bg-purple-200';
+            
+            if (answer === 'bedrywend') {
+                bedrywendBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-colors bg-blue-500 text-white';
+            } else {
+                lydendBtn.className = 'px-4 py-2 rounded-lg font-semibold transition-colors bg-purple-500 text-white';
+            }
+            
+            // Show feedback
+            const questions = [
+                { id: 'q1', answer: 'bedrywend', explanation: 'TWICE (onderwerp) voer die handeling uit.' },
+                { id: 'q2', answer: 'lydend', explanation: 'Die album (onderwerp) ondergaan die handeling, "word uitgereik" is lydende vorm.' },
+                { id: 'q3', answer: 'bedrywend', explanation: 'Fans (onderwerp) voer die handeling "koop" uit.' },
+                { id: 'q4', answer: 'lydend', explanation: '"word gehoor" is lydende vorm, die liedjie ondergaan die handeling.' }
+            ];
+            
+            const question = questions.find(q => q.id === questionId);
+            const feedback = document.getElementById(`feedback-${questionId}`);
+            const isCorrect = answer === question.answer;
+            
+            feedback.className = `mt-3 p-3 rounded ${isCorrect ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`;
+            feedback.innerHTML = `
+                <p class="font-semibold ${isCorrect ? 'text-green-800' : 'text-red-800'}">
+                    ${isCorrect ? '✅ Korrek!' : '❌ Verkeerd'}
+                </p>
+                <p class="text-sm text-gray-700 mt-1">${question.explanation}</p>
+            `;
+            feedback.classList.remove('hidden');
+        }
+
+        function checkTransform(transformId) {
+            const transforms = {
+                't1': 'ʼn Nuwe liedjie word deur NewJeans gesing.',
+                't2': 'Die musiekvideo word deur die produsent gemaak.',
+                't3': 'ʼn Konsert sal deur Stray Kids aangebied word.'
+            };
+            
+            const userAnswer = document.getElementById(`answer-${transformId}`).value.trim();
+            const correctAnswer = transforms[transformId];
+            
+            if (!userAnswer) {
+                alert('Tik eers jou antwoord in!');
+                return;
+            }
+            
+            const normalizedUser = userAnswer.toLowerCase().replace(/[^\w\s]/g, '').trim();
+            const normalizedCorrect = correctAnswer.toLowerCase().replace(/[^\w\s]/g, '').trim();
+            const isCorrect = normalizedUser === normalizedCorrect;
+            
+            const feedback = document.getElementById(`transform-feedback-${transformId}`);
+            feedback.className = `mt-4 p-4 rounded-lg border-2 ${isCorrect ? 'bg-green-50 border-green-300' : 'bg-orange-50 border-orange-300'}`;
+            feedback.innerHTML = `
+                <div class="font-bold text-lg mb-2 ${isCorrect ? 'text-green-700' : 'text-orange-700'}">
+                    ${isCorrect ? '✅ Uitstekend! Heeltemal korrek!' : '🤔 Byna reg, maar probeer weer!'}
+                </div>
+                ${!isCorrect ? `
+                    <div class="text-sm text-orange-700">
+                        <p><strong>Jou antwoord:</strong> "${userAnswer}"</p>
+                        <p><strong>Wenk:</strong> Let op die woordorde en werkwoordvorme.</p>
+                    </div>
+                ` : ''}
+            `;
+            feedback.classList.remove('hidden');
+        }
+
+        function showAnswer(transformId) {
+            const transforms = {
+                't1': 'ʼn Nuwe liedjie word deur NewJeans gesing.',
+                't2': 'Die musiekvideo word deur die produsent gemaak.',
+                't3': 'ʼn Konsert sal deur Stray Kids aangebied word.'
+            };
+            
+            const feedback = document.getElementById(`transform-feedback-${transformId}`);
+            feedback.className = 'mt-4 p-4 bg-gray-50 rounded-lg border-2 border-gray-300';
+            feedback.innerHTML = `
+                <p class="font-bold text-gray-800 mb-2">📚 Korrekte Antwoord:</p>
+                <p class="text-lg italic text-gray-700">"${transforms[transformId]}"</p>
+                <div class="mt-3 text-sm text-gray-600">
+                    <p><strong>Verduideliking:</strong></p>
+                    <p>• Die oorspronklike voorwerp word die nuwe onderwerp</p>
+                    <p>• Voeg "word" + verlede deelwoord by</p>
+                    <p>• Voeg "deur" + oorspronklike onderwerp by</p>
+                </div>
+            `;
+            feedback.classList.remove('hidden');
+        }
+
+        function selectQuizAnswer(quizId, optionIndex) {
+            selectedAnswers[quizId] = optionIndex;
+            
+            // Update button styles for multiple choice
+            const buttons = document.querySelectorAll(`[id^="quiz-btn-${quizId}-"]`);
+            buttons.forEach((btn, index) => {
+                if (index === optionIndex) {
+                    btn.className = 'w-full text-left p-3 rounded border-2 transition-colors border-purple-500 bg-purple-50';
+                } else {
+                    btn.className = 'w-full text-left p-3 rounded border-2 transition-colors border-gray-200 hover:border-purple-300';
+                }
+            });
+        }
+
+        function checkQuizAnswer(quizId) {
+            const feedback = document.getElementById(`quiz-feedback-${quizId}`);
+            feedback.classList.remove('hidden');
+        }
+
+        // Event Listeners
+        document.getElementById('next-btn').addEventListener('click', nextSection);
+        document.getElementById('prev-btn').addEventListener('click', prevSection);
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadSection();
+        });
+    </script>
+</body>
+</html>
